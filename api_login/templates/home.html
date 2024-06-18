@@ -1,0 +1,33 @@
+<!-- myapp/templates/home.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h2>Welcome</h2>
+    <button onclick="logout()">Logout</button>
+    <script>
+        async function logout() {
+            const response = await fetch('/api/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                },
+                body: JSON.stringify({
+                    refresh: localStorage.getItem('refresh'),
+                }),
+            });
+
+            if (response.ok) {
+                localStorage.removeItem('access');
+                localStorage.removeItem('refresh');
+                window.location.href = '/';
+            } else {
+                alert('Logout failed');
+            }
+        }
+    </script>
+</body>
+</html>

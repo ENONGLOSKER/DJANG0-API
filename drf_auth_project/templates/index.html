@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <p>Selamat datang, {{ user.username }}!</p>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" onclick="handleLogout()">Logout</button>
+        </form>
+    {% else %}
+        <p>Anda belum login.</p>
+        <a href="{% url 'login_page' %}">Login</a>
+    {% endif %}
+    
+    <script>
+        function handleLogout() {
+            fetch("{% url 'logout' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "{% url 'login_page' %}";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
