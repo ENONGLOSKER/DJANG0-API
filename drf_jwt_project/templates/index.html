@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>User List</h1>
+    <button id="logout-button">Logout</button>
+    <ul id="user-list"></ul>
+    <script>
+        document.getElementById('logout-button').onclick = async function() {
+            const refresh_token = localStorage.getItem('refresh_token');
+            if (!refresh_token) {
+                alert('No refresh token found');
+                return;
+            }
+
+            const response = await fetch('/api/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ refresh: refresh_token }),
+            });
+
+            if (response.status === 205) {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/user/login/';
+            } else {
+                alert('Logout failed');
+            }
+        };
+
+        async function fetchUserList() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                alert('Not authenticated');
+                window.location.href = '/user/login/';
+                return;
+            }
+
+            const response = await fetch('/api/user/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 401) {
+                alert('Token expired or invalid. Please login again.');
+                window.location.href = '/user/login/';
+                return;
+            }
+
+            const users = await response.json();
+            const userList = document.getElementById('user-list');
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.textContent = `Username: ${user.username}, Email: ${user.email}`;
+                userList.appendChild(li);
+            });
+        }
+
+        window.onload = fetchUserList;
+    </script>
+</body>
+</html>

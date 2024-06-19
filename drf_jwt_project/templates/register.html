@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+    <h1>Register</h1>
+    <form id="register-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br>
+        <button type="submit">Register</button>
+    </form>
+    <script>
+        document.getElementById('register-form').onsubmit = async function(event) {
+            event.preventDefault();
+            const response = await fetch('http://127.0.0.1:8000/api/register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                    email: document.getElementById('email').value,
+                }),
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+        };
+    </script>
+</body>
+</html>

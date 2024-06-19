@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form id="login-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br>
+        <button type="submit">Login</button>
+    </form>
+    <script>
+        document.getElementById('login-form').onsubmit = async function(event) {
+            event.preventDefault();
+            const response = await fetch('/api/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                }),
+            });
+            const result = await response.json();
+            if (result.access) {
+                localStorage.setItem('access_token', result.access);
+                localStorage.setItem('refresh_token', result.refresh);
+                window.location.href = '/';
+            } else {
+                alert(result.error);
+            }
+        };
+    </script>
+</body>
+</html>

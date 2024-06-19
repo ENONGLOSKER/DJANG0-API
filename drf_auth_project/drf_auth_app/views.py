@@ -34,7 +34,13 @@ def logout_view(request):
 @api_view(['GET'])
 def list_user(request):
     users = User.objects.all()
-    user_data = [{"username": user.username, "email": user.email, "password": user.password} for user in users]
+    user_data = [
+        {"username": user.username, 
+         "email": user.email, 
+         "password": user.password
+        } 
+        for user in users
+    ]
     return Response(user_data, status=status.HTTP_200_OK)
 
 
